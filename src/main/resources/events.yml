@@ -1,0 +1,12 @@
+ffa1:
+  kits:
+    commands:
+      - "/give <player> Minecraft:DIAMOND_SWORD"
+    items:
+      - "DIAMOND_HELMET"
+ffa2:
+  kits:
+    commands:
+      - "/give <player> Minecraft:DIAMOND_SWORD"
+    items:
+      - "DIAMOND_LEGGINGS"

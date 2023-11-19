@@ -1,0 +1,4 @@
+name: rowEvents
+version: '${project.version}'
+main: rownox.net.rowevents.RowEvents
+api-version: '1.20'
