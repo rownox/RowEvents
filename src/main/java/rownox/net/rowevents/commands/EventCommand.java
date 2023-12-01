@@ -35,7 +35,11 @@ public class EventCommand implements CommandExecutor {
                 sendEventList(p);
             }
 
-            new Event(type + "_" + p.getName(), EventConfig.getConfig(type));
+            String eventName = type + "_" + p.getName();
+
+            new Event(eventName, EventConfig.getConfig(type));
+
+            p.sendMessage(ChatColor.GREEN + "You've successfully created an event. Name: " + ChatColor.DARK_GREEN + eventName);
 
         } else if (args[0].equalsIgnoreCase("join")) {
             PlayerWrapper pw = PlayerWrapper.getWrapper(p.getUniqueId());
