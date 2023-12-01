@@ -9,12 +9,9 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.EnchantmentTarget;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import rownox.net.rowevents.RowEvents;
 import rownox.net.rowevents.files.EventConfig;
 
 import java.util.ArrayList;
@@ -28,11 +25,13 @@ public class Event {
 
     private final String eventName;
     private final List<UUID> participantList;
+    private final List<UUID> livingList;
     private final EventConfig eventConfig;
     private boolean inProgress;
 
-    public Event(String eventName, EventConfig eventConfig) {
+    public Event(String eventName, List<UUID> livingList, EventConfig eventConfig) {
         this.eventName = eventName;
+        this.livingList = livingList;
         this.participantList = new ArrayList<>();
         this.eventConfig = eventConfig;
         this.inProgress = false;
@@ -55,6 +54,22 @@ public class Event {
 
     private void end() {
 
+    }
+
+    private void updatedStatus() {
+        if (livingList.size() <= 1) {
+            final Player winner = Bukkit.getPlayer(livingList.get(0));
+
+            if (winner != null) {
+                Bukkit.broadcastMessage("\n" + ChatColor.GREEN + "" + ChatColor.BOLD + "Event Concluded\n" +
+                        ChatColor.YELLOW + "Winner: " + ChatColor.GOLD + winner.getName() + "\n"
+                );
+            } else {
+                Bukkit.broadcastMessage("\n" + ChatColor.GREEN + "" + ChatColor.BOLD + "Event Concluded\n");
+            }
+
+            end();
+        }
     }
 
     private void kitPlayer(Player p) {

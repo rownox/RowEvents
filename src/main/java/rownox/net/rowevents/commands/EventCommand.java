@@ -5,7 +5,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import rownox.net.rowevents.RowEvents;
 import rownox.net.rowevents.events.Event;
 import rownox.net.rowevents.files.EventConfig;
 import rownox.net.rowevents.players.PlayerWrapper;
@@ -37,7 +36,7 @@ public class EventCommand implements CommandExecutor {
 
             String eventName = type + "_" + p.getName();
 
-            new Event(eventName, EventConfig.getConfig(type));
+            new Event(eventName, livingList, EventConfig.getConfig(type));
 
             p.sendMessage(ChatColor.GREEN + "You've successfully created an event. Name: " + ChatColor.DARK_GREEN + eventName);
 
