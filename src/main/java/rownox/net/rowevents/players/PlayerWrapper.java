@@ -2,6 +2,7 @@ package rownox.net.rowevents.players;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import rownox.net.rowevents.events.Event;
 
@@ -15,6 +16,8 @@ public class PlayerWrapper {
     public static HashMap<UUID, PlayerWrapper> wrappers;
 
     private Event currentEvent;
+
+    private Location posBeforeEvent;
 
     public PlayerWrapper(UUID id) {
         wrappers.put(id, this);

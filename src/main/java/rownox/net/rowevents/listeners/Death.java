@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import rownox.net.rowevents.events.Event;
 import rownox.net.rowevents.players.PlayerWrapper;
 
 public class Death implements Listener {
@@ -15,10 +16,13 @@ public class Death implements Listener {
 
         if (victim == null) return;
         PlayerWrapper pw = PlayerWrapper.getWrapper(victim);
+        Event event = pw.getCurrentEvent();
 
-        if (pw.getCurrentEvent() != null) {
-            pw.getCurrentEvent().getParticipantList().remove(victim.getUniqueId());
+        if (event != null) {
+            event.getParticipantList().remove(victim.getUniqueId());
             pw.setCurrentEvent(null);
+            event.updatedStatus();
+            victim.spigot().respawn();
         }
     }
 }

@@ -13,6 +13,8 @@ import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import rownox.net.rowevents.files.EventConfig;
+import rownox.net.rowevents.players.PlayerWrapper;
+import world.ntdi.nrcore.utils.ArmorManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,49 +25,56 @@ public class Event {
 
     public static List<Event> events;
 
+    private final UUID eventHoster;
     private final String eventName;
     private final List<UUID> participantList;
     private final List<UUID> livingList;
     private final EventConfig eventConfig;
     private boolean inProgress;
 
-    public Event(String eventName, List<UUID> livingList, EventConfig eventConfig) {
+    public Event(UUID eventHoster, String eventName, EventConfig eventConfig) {
+        this.eventHoster = eventHoster;
         this.eventName = eventName;
-        this.livingList = livingList;
+        this.livingList = new ArrayList<>();
         this.participantList = new ArrayList<>();
         this.eventConfig = eventConfig;
         this.inProgress = false;
         events.add(this);
 
         TextComponent component = new TextComponent(ChatColor.GREEN + "" + ChatColor.UNDERLINE + "CLICK HERE" + ChatColor.GREEN + "to participate");
-        component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GREEN + "Click to join the event").create()));
-        component.setClickEvent(new net.md_5.bungee.api.chat.ClickEvent(ClickEvent.Action.RUN_COMMAND, "/events join " + eventName));
+        component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/events join " + eventName));
         for (Player p : Bukkit.getOnlinePlayers()) {
             p.spigot().sendMessage(component);
         }
     }
 
-    private void begin() {
+    public void begin() {
         participantList.forEach(playerID -> {
             Player p = Bukkit.getPlayer(playerID);
+            ArmorManager.storeAndClearInventory(p);
             kitPlayer(p);
         });
     }
 
-    private void end() {
-
+    public void end() {
+        participantList.forEach(playerID -> {
+            Player p = Bukkit.getPlayer(playerID);
+            PlayerWrapper pw = PlayerWrapper.getWrapper(p);
+            ArmorManager.setPlayerContents(p, true);
+            p.teleport(pw.getPosBeforeEvent());
+        });
     }
 
-    private void updatedStatus() {
+    public void updatedStatus() {
         if (livingList.size() <= 1) {
             final Player winner = Bukkit.getPlayer(livingList.get(0));
 
             if (winner != null) {
-                Bukkit.broadcastMessage("\n" + ChatColor.GREEN + "" + ChatColor.BOLD + "Event Concluded\n" +
+                Bukkit.broadcastMessage("\n" + ChatColor.GREEN + ChatColor.BOLD + "Event Concluded\n" +
                         ChatColor.YELLOW + "Winner: " + ChatColor.GOLD + winner.getName() + "\n"
                 );
             } else {
-                Bukkit.broadcastMessage("\n" + ChatColor.GREEN + "" + ChatColor.BOLD + "Event Concluded\n");
+                Bukkit.broadcastMessage("\n" + ChatColor.GREEN + ChatColor.BOLD + "Event Concluded\n");
             }
 
             end();

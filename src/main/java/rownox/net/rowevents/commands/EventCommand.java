@@ -1,6 +1,7 @@
 package rownox.net.rowevents.commands;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -8,6 +9,7 @@ import org.bukkit.entity.Player;
 import rownox.net.rowevents.events.Event;
 import rownox.net.rowevents.files.EventConfig;
 import rownox.net.rowevents.players.PlayerWrapper;
+import world.ntdi.nrcore.utils.ArmorManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +38,7 @@ public class EventCommand implements CommandExecutor {
 
             String eventName = type + "_" + p.getName();
 
-            new Event(eventName, livingList, EventConfig.getConfig(type));
+            new Event(p.getUniqueId(), eventName, EventConfig.getConfig(type));
 
             p.sendMessage(ChatColor.GREEN + "You've successfully created an event. Name: " + ChatColor.DARK_GREEN + eventName);
 
@@ -50,6 +52,10 @@ public class EventCommand implements CommandExecutor {
             }
 
             String eventName = args[1];
+            Location position = p.getLocation();
+            pw.setPosBeforeEvent(position);
+
+            ArmorManager.storeAndClearInventory(p);
 
             for (Event event : Event.events) {
                 if (event.getEventName().equalsIgnoreCase(eventName)) {
@@ -57,6 +63,8 @@ public class EventCommand implements CommandExecutor {
                 }
             }
 
+        } else if (args[0].equalsIgnoreCase("begin")) {
+            sendEventList(p);
         } else if (args[0].equalsIgnoreCase("list")) {
             sendEventList(p);
         }

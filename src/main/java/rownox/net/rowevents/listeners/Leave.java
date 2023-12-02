@@ -14,7 +14,8 @@ public class Leave implements Listener {
         PlayerWrapper pw = PlayerWrapper.getWrapper(p);
         if (pw.getCurrentEvent() != null) {
             Event event = pw.getCurrentEvent();
-            pw.getCurrentEvent().getParticipantList().remove(p.getUniqueId());
+            event.getParticipantList().remove(p.getUniqueId());
+            event.updatedStatus();
         }
     }
 }
